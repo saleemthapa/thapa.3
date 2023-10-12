@@ -1,0 +1,53 @@
+Project: Adding simple message queue
+Submitted By : Saleem Thapa
+Project Description :
+
+This project adds a message queue to the existing system clock and process table. The `oss` executable launches and manages worker processes while coordinating their activities using a message queue.
+We have two executables: `oss` and `worker`. `oss` launches worker processes and manages their interactions. The system clock is maintained separately from the system's main clock and shared among the processes. Each process has a Process Control Block (PCB) in a process table.
+
+Worker Behavior:
+
+Workers receive two arguments representing their expected duration. Workers perform iterations by waiting for messages from oss and periodically checking the clock. They send messages back to oss based on their checks.
+
+oss, the Parent Behavior :
+
+oss launches worker processes based on command-line arguments. It maintains the system clock, process table, and message queues. It controls the order in which workers access the clock.
+
+Command Line Parameters
+-n: Total number of children
+-s: Maximum simultaneous children
+-t: Time limit for child processes
+-f: Log file
+oss outputs to the log file and screen. The worker output is not logged.
+
+Instructions:
+
+Compilation:
+
+Ensure you have GCC (GNU Compiler Collection) installed on your system.
+
+Open your terminal and navigate to the project directory where oss.c, worker.c,shared.h,memclean.sh and makefile are located.
+
+To compile the project, run the following command:
+First use bash memclean.sh to ensure all the all the shared memory and message queue are cleaned.
+
+Type command "make" This will compile both oss.c and worker.c and generate the oss and worker executables.
+
+Running the Program: type "./oss -n <total_children> -s <simultaneous_children> -t<timelimit> -f <logfile> "
+ 
+Example : ./oss -n 5 -s 3 -t 7 -f oss.log
+ This command will launch oss with 5 total children, allow a maximum of 3 children to run simultaneously, and specify 7 iterations per child and creates a logfile called oss.log(All the oss logs are written in this file)
+
+Cleaning Up: To remove the compiled executables, use the following command: type "make clean" This will delete the oss and worker executables.
+
+Aditional things done:
+
+In our project, we've created a shared.h header file to facilitate communication and consistency between the oss and worker programs. This header file serves as a centralized repository for shared data structures and constants, ensuring that both processes have a common understanding of critical elements in the system.
+
+shared.h defines essential data structures, such as the SystemClock and Message structures, which are used for inter-process communication. These structures enable both oss and worker to exchange information effectively. Additionally, the header file defines shared constants like message queue names and shared memory keys, ensuring that both programs use the same values for these parameters.
+
+The creation of shared.h reduces redundancy, enhances code readability, and simplifies maintenance. Any modifications or updates to shared data structures or constants can be made in a single location, preventing inconsistencies and reducing the risk of errors that may arise from multiple definitions. As a result, shared.h streamlines our codebase, making it more organized and straightforward, and promotes effective collaboration between the oss and worker components of our project.
+
+
+
+
